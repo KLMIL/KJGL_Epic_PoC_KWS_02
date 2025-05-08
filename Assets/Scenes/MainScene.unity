@@ -647,6 +647,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7d1d74c28e5ca2488f87075220e5937, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _briefingText: {fileID: 2145986206}
 --- !u!1 &231800101
 GameObject:
   m_ObjectHideFlags: 0
@@ -1725,6 +1726,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c1f0c0400bb0b7c4299f8490b3b92fda, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _npcController: {fileID: 138310789}
+  _gameManager: {fileID: 1217340086}
+  _playerController: {fileID: 1475126555}
+  _attackInteraval: 3
+  _enemyHealth: 50
+  _damageToPlayer: 10
+  _damageToEnemy: 10
+  _nextActionTime: 0
+  _requiredAction: 
+  _enemyHealthText: {fileID: 33610663}
 --- !u!1 &904847568
 GameObject:
   m_ObjectHideFlags: 0
@@ -2356,8 +2367,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 357f58b090df1874c88fb86eb7bc542a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _playerController: {fileID: 0}
-  _enemyController: {fileID: 0}
+  _playerController: {fileID: 1475126555}
+  _enemyController: {fileID: 864277020}
+  _npcController: {fileID: 138310789}
+  _choicePanel: {fileID: 626554486}
 --- !u!1 &1247041365
 GameObject:
   m_ObjectHideFlags: 0
@@ -2806,6 +2819,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e3abdfa1f0314d449879a1ad3f667a2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _maxHealth: 100
+  _currHealth: 0
+  _enemyController: {fileID: 864277020}
+  _playerHealthText: {fileID: 904847570}
 --- !u!1 &1532790040
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,11 +1,11 @@
-/**********************************************************
+ï»¿/**********************************************************
  * Script Name: GameManager
- * Author: ±è¿ì¼º
+ * Author: ê¹€ìš°ì„±
  * Date Created: 2025-05-08
  * Last Modified: 2025-05-08
  * Description: 
- * - °ÔÀÓ ½ÃÀÛ°ú Á¾·á ¹× °ÔÀÓ Èå¸§ °ü¸®
- * - ½ºÅ×ÀÌÁö Å¬¸®¾î½Ã ÇÃ·¹ÀÌ¾î¿¡°Ô ¼±ÅÃÁö Á¦°ø
+ * - ê²Œì„ ì‹œì‘ê³¼ ì¢…ë£Œ ë° ê²Œì„ íë¦„ ê´€ë¦¬
+ * - ìŠ¤í…Œì´ì§€ í´ë¦¬ì–´ì‹œ í”Œë ˆì´ì–´ì—ê²Œ ì„ íƒì§€ ì œê³µ
  *********************************************************/
 
 using UnityEngine;
@@ -14,31 +14,81 @@ public class GameManager : MonoBehaviour
 {
     [SerializeField] PlayerController _playerController;
     [SerializeField] EnemyController _enemyController;
+    [SerializeField] NPCController _npcController;
 
     bool _isStageCleared;
+    bool _isShowingChoices;
+
+    [SerializeField] GameObject _choicePanel;
 
     private void Start()
     {
         Debug.Log("Game Started");
         _isStageCleared = false;
+        _isShowingChoices = false;
+        _choicePanel.SetActive(false);
+        _enemyController.CreateEnemy();
     }
 
     private void Update()
     {
-        // ½ºÅ×ÀÌÁö Å¬¸®¾î
-
-        // °ÔÀÓ ¿À¹ö
+        // ê²Œì„ ì˜¤ë²„
         if (_playerController.CurrHealth <= 0)
         {
             Debug.Log("Game Over");
-            /* °ÔÀÓ Á¾·á Ã³¸® Ãß°¡ */
+            Time.timeScale = 0f;
+            /* ê²Œì„ ì¢…ë£Œ ì²˜ë¦¬ ì¶”ê°€ */
+        }
+
+        // ì„ íƒì§€ ì…ë ¥ ì²˜ë¦¬
+        if (_isShowingChoices)
+        {
+            HandleChoiceInput();
         }
     }
 
+    // ì  ì œê±°ì‹œ í˜¸ì¶œ
+    public void OnEnemyDefeated()
+    {
+        _isStageCleared = true;
+        _isShowingChoices = true;
+        ShowRandomChoices();
+    }
 
-    // ½ºÅ×ÀÌÁö Å¬¸®¾î ÇßÀ» ¶§, ¼±ÅÃÁö º¸¿©ÁÖ´Â ÇÔ¼ö
+    // ìŠ¤í…Œì´ì§€ í´ë¦¬ì–´ í–ˆì„ ë•Œ, ì„ íƒì§€ ë³´ì—¬ì£¼ëŠ” í•¨ìˆ˜
     private void ShowRandomChoices()
     {
-        
+        _choicePanel.SetActive(true);
+    }
+
+    private void HandleChoiceInput()
+    {
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            /* ëœë¤ ì„ íƒì§€ ìƒì„± */
+            ResetChoice();
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            /* ëœë¤ ì„ íƒì§€ ìƒì„± */
+            ResetChoice();
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha3))
+        {
+            /* ëœë¤ ì„ íƒì§€ ìƒì„± */
+            ResetChoice();
+        }
+        else
+        {
+            /* Do Nothing */
+        }
+    }
+
+    private void ResetChoice()
+    {
+        _isShowingChoices = false;
+        _isStageCleared = false;
+        _enemyController.CreateEnemy();
+        _choicePanel.SetActive(false);
     }
 }

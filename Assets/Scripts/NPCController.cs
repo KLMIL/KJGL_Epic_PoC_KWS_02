@@ -1,22 +1,33 @@
-/**********************************************************
+ï»¿/**********************************************************
  * Script Name: NPCController
- * Author: ±è¿ì¼º
+ * Author: ê¹€ìš°ì„±
  * Date Created: 2025-05-08
  * Last Modified: 2025-05-08
  * Description: 
- * - Àû ÆÐÅÏ¿¡ ¸Â´Â ÇÃ·¹ÀÌ¾î Çàµ¿À» ÅØ½ºÆ®·Î Ç¥½Ã
+ * - ì  íŒ¨í„´ì— ë§žëŠ” í”Œë ˆì´ì–´ í–‰ë™ì„ í…ìŠ¤íŠ¸ë¡œ í‘œì‹œ
  *********************************************************/
 
 using TMPro;
 using UnityEngine;
+using UnityEngine.Scripting.APIUpdating;
 
 public class NPCController : MonoBehaviour
 {
     [SerializeField] TextMeshProUGUI _briefingText;
-    [SerializeField] EnemyController _enemyController;
 
-    private void Update()
+    public void UpdateBriefingText(string action)
     {
-        /* Àû¿¡ Çàµ¿¿¡ ¸Â´Â Çàµ¿ ÅØ½ºÆ® Ç¥½Ã */
+        string displayText = action switch
+        {
+            "W" => "Move Up",
+            "A" => "Move Left",
+            "S" => "Move Down",
+            "D" => "Move Right",
+            "LeftClick" => "Attack (Left Click)",
+            "Right Click" => "Guard (Right Click)",
+            "Shift" => "Dash (Shift)",
+            _ => "Unknown Action"
+        };
+        _briefingText.text = $"Enemy Action:\n{displayText}";
     }
 }

@@ -1,13 +1,15 @@
-/**********************************************************
+ï»¿/**********************************************************
  * Script Name: PlayerController
- * Author: ±è¿ì¼º
+ * Author: ê¹€ìš°ì„±
  * Date Created: 2025-05-08
  * Last Modified: 2025-05-08
  * Description: 
- * - ÇÃ·¹ÀÌ¾îÀÇ ÀÔ·Â, Ã¼·Â »óÅÂ °ü¸®
- * - ¸ğµç ÇàÀ§ÀÇ µô·¹ÀÌ Á¤º¸ °ü¸®
+ * - í”Œë ˆì´ì–´ì˜ ì…ë ¥, ì²´ë ¥ ìƒíƒœ ê´€ë¦¬
+ * - ëª¨ë“  í–‰ìœ„ì˜ ë”œë ˆì´ ì •ë³´ ê´€ë¦¬
  *********************************************************/
 
+using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -16,8 +18,27 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float _currHealth;
     public float CurrHealth => _currHealth;
 
+    // í–‰ë™ë³„ ë”œë ˆì´
+    Dictionary<string, float> _actionDelays = new Dictionary<string, float>
+    {
+        { "Move", 0.0f },
+        { "Dash", 0.0f },
+        { "Attack", 0.0f },
+        { "Guard", 0.0f },
+    };
 
-    /* °¢ Çàµ¿ µô·¹ÀÌ ÇÊµå Ãß°¡? Å¸ÀÌ¹Ö Àç´Â ¹æ¹ı */
+    // ë§ˆì§€ë§‰ í–‰ë™ ì…ë ¥ ì‹œê°„
+    Dictionary<string, float> _lastActionTimes = new Dictionary<string, float>
+    {
+        { "Move", 0.0f },
+        { "Dash", 0.0f },
+        { "Attack", 0.0f },
+        { "Guard", 0.0f }
+    };
+
+    [SerializeField] EnemyController _enemyController;
+
+    [SerializeField] TextMeshProUGUI _playerHealthText;
 
 
     private void Start()
@@ -32,24 +53,74 @@ public class PlayerController : MonoBehaviour
 
     private void GetInput()
     {
-        /* »ç¿ëÀÚ Å° ÀÔ·Â¹Ş´Â ºÎºĞ */
+        // ì´ë™ ì…ë ¥ (WASD)
+        if (Input.GetKeyDown(KeyCode.W) && CanPerformAction("Move"))
+        {
+            ProcessAction("W");
+            _lastActionTimes["Move"] = Time.time;
+        }
+        else if (Input.GetKeyDown(KeyCode.A) && CanPerformAction("Move"))
+        {
+            ProcessAction("A");
+            _lastActionTimes["Move"] = Time.time;
+        }
+        else if (Input.GetKeyDown(KeyCode.S) && CanPerformAction("Move"))
+        {
+            ProcessAction("S");
+            _lastActionTimes["Move"] = Time.time;
+        }
+        else if (Input.GetKeyDown(KeyCode.D) && CanPerformAction("Move"))
+        {
+            ProcessAction("D");
+            _lastActionTimes["Move"] = Time.time;
+        }
+
+        // íšŒí”¼ ì…ë ¥ (Shift)
+        if (Input.GetKeyDown(KeyCode.LeftShift) && CanPerformAction("Defense"))
+        {
+            ProcessAction("Shift");
+            _lastActionTimes["Dash"] = Time.time;
+        }
+
+        // ê³µê²© ì…ë ¥ (ì¢Œí´ë¦­)
+        if (Input.GetMouseButtonDown(0) && CanPerformAction("Attack"))
+        {
+            ProcessAction("LeftClick");
+            _lastActionTimes["Attack"] = Time.time;
+        }
+
+        // ë°©ì–´ ì…ë ¥ (ìš°í´ë¦­)
+        if (Input.GetMouseButtonDown(1) && CanPerformAction("Attack"))
+        {
+            ProcessAction("RightClick");
+            _lastActionTimes["Guard"] = Time.time;
+        }
     }
 
-    private void ProcessAction()
+    private bool CanPerformAction(string actionType)
     {
-        /* Å° ÀÔ·Â¿¡ µû¶ó °á°ú Ã³¸®ÇÏ´Â ºÎºĞ */
+        return Time.time >= _lastActionTimes[actionType] + _actionDelays[actionType];
+    }
+
+    private void ProcessAction(string action)
+    {
+        _enemyController.CheckPlayerInput(action);
     }
 
     public void TakeDamage(float damage)
     {
-        _currHealth -= damage;
-        // UI °»½Å
+        _currHealth = Mathf.Max(0, _currHealth - damage);
+        _playerHealthText.text = $"Player HP\n{_currHealth}";
         Debug.Log($"Player Health: {_currHealth}");
     }
 
-    public void ChangeDelay()
+    // ì„ íƒì§€ë¥¼ ë½‘ì•˜ì„ ë•Œ ë”œë ˆì´ë¥¼ ë³€ê²½í•˜ëŠ” í•¨ìˆ˜
+    public void ChangeDelay(string actionType, float change)
     {
-        /* ÇÔ¼ö ÆÄ¶ó¹ÌÅÍ¿¡ ¾×¼Ç Á¾·ù¿Í µô·¹ÀÌ º¯È­°ª Ãß°¡ */
-        /* ¼±ÅÃÁö »ÌÀ¸¸é µô·¹ÀÌ º¯°æ ºÎºĞ */
+        if (_actionDelays.ContainsKey(actionType))
+        {
+            _actionDelays[actionType] = Mathf.Clamp(_actionDelays[actionType] + change, -1f, 1f);
+            Debug.Log($"{actionType} Delay: {_actionDelays[actionType]}");
+        }
     }
 }

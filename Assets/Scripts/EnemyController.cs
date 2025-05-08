@@ -1,27 +1,43 @@
-/**********************************************************
+ï»¿/**********************************************************
  * Script Name: EnemyController
- * Author: ±è¿ì¼º
+ * Author: ê¹€ìš°ì„±
  * Date Created: 2025-05-08
  * Last Modified: 2025-05-08
  * Description: 
- * - Àû »ı¼º ÇÔ¼ö
- * - °íÀ¯ ÆĞÅÏ ½ÇÇà
- * - ÆĞÅÏ¿¡ µû¸¥ Á¤º¸ Á¦°ø
+ * - ì  ìƒì„± í•¨ìˆ˜
+ * - ê³ ìœ  íŒ¨í„´ ì‹¤í–‰
+ * - íŒ¨í„´ì— ë”°ë¥¸ ì •ë³´ ì œê³µ
  *********************************************************/
 
+using TMPro;
 using UnityEngine;
 using UnityEngine.Android;
 
 public class EnemyController : MonoBehaviour
 {
+    [SerializeField] NPCController _npcController;
+    [SerializeField] GameManager _gameManager;
+    [SerializeField] PlayerController _playerController;
+
     [SerializeField] float _attackInteraval = 3f;
+    [SerializeField] float _enemyHealth = 100f;
+    [SerializeField] float _damageToPlayer = 10f;
+    [SerializeField] float _damageToEnemy = 10f;   
+    
     [SerializeField] float _nextActionTime;
-    [SerializeField] string[] _patterns;
     [SerializeField] string _requiredAction;
+
+    readonly string[] _possibleActions =
+    {
+        "W", "A", "S", "D", "LeftClick", "RightClick", "Shift"
+    };
+
+    [SerializeField] TextMeshProUGUI _enemyHealthText;
+
 
     private void Start()
     {
-        /* ·£´ı ÆĞÅÏ »ı¼º ÇÔ¼ö */
+        CreateEnemy();
         _nextActionTime = Time.time + _attackInteraval;
     }
 
@@ -34,8 +50,41 @@ public class EnemyController : MonoBehaviour
         }
     }
 
+    public void CreateEnemy()
+    {
+        _enemyHealth = 100f;
+        GenerateRandomPattern();
+    }
+
+    private void GenerateRandomPattern()
+    {
+        _requiredAction = _possibleActions[Random.Range(0, _possibleActions.Length)];
+        Debug.Log($"Enemy Pattern: {_requiredAction}");
+    }
+
     private void ExecutePattern()
     {
-        /* ÆĞÅÏ¿¡ µû¶ó ÇÃ·¹ÀÌ¾î¿¡°Ô ´ë¹ÌÁö ºÎ¿© */
+        GenerateRandomPattern();
+    }
+
+    /* íŒ¨í„´ì— ë”°ë¼ í”Œë ˆì´ì–´ì—ê²Œ ëŒ€ë¯¸ì§€ ë¶€ì—¬ */
+    public void CheckPlayerInput(string playerAction)
+    {
+        if (playerAction == _requiredAction)
+        {
+            _enemyHealth -= _damageToEnemy;
+            Debug.Log($"Enemy Hit! Enemy Health: {_enemyHealth}");
+            _enemyHealthText.text = $"Enemy HP\n{_enemyHealth}";
+            if (_enemyHealth <= 0)
+            {
+                // ì  ì œê±° ì•Œë¦¼
+                _gameManager.OnEnemyDefeated();
+            }
+        }
+        else
+        {
+            _playerController.TakeDamage(_damageToPlayer);
+            Debug.Log("Player Missed!");
+        }
     }
 }
