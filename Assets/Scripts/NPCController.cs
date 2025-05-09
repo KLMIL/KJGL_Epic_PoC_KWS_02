@@ -8,26 +8,62 @@
  *********************************************************/
 
 using TMPro;
+using UnityEditor;
 using UnityEngine;
-using UnityEngine.Scripting.APIUpdating;
 
 public class NPCController : MonoBehaviour
 {
+    [SerializeField] PlayerController _playerController;
+
     [SerializeField] TextMeshProUGUI _briefingText;
+    [SerializeField] TextMeshProUGUI _timingText;
 
     public void UpdateBriefingText(string action)
     {
         string displayText = action switch
         {
-            "W" => "Move Up",
-            "A" => "Move Left",
-            "S" => "Move Down",
-            "D" => "Move Right",
-            "LeftClick" => "Attack (Left Click)",
-            "Right Click" => "Guard (Right Click)",
+            "W" => "Move Up (W)",
+            "A" => "Move Left (A)",
+            "S" => "Move Down (S)",
+            "D" => "Move Right (D)",
+            "LeftClick" => "Attack (L Mouse)",
+            "RightClick" => "Guard (R Mouse)",
             "Shift" => "Dash (Shift)",
             _ => "Unknown Action"
         };
         _briefingText.text = $"Enemy Action:\n{displayText}";
+    }
+
+    public void UpdateTimingText(float timing)
+    {
+        if (_timingText != null)
+        {
+            //_timingText.text = $"Timing: {timing:F2}s";
+            _timingText.text = "Input Correct Action";
+        }
+    }
+
+    public void ShowTimingResult(bool success, string message = null)
+    {
+        if (_timingText != null)
+        {
+            CancelInvoke(nameof(ResetTimingText));
+            _timingText.text = success ? "Success!" : (message ?? "Failed!");
+            Invoke(nameof(ResetTimingText), 1f);
+        }
+    }
+
+    public void ShowChoicePrompt()
+    {
+        if (_briefingText != null)
+        {
+            CancelInvoke(nameof(ResetTimingText));
+            _briefingText.text = "Choose an Option!";
+        }
+    }
+
+    private void ResetTimingText()
+    {
+        UpdateTimingText(0f);
     }
 }
